@@ -1,0 +1,82 @@
+
+C:\Users\prathamesh>mysql -u root -p
+Enter password: ****
+Welcome to the MySQL monitor.  Commands end with ; or \g.
+Your MySQL connection id is 14
+Server version: 8.0.37 MySQL Community Server - GPL
+
+Copyright (c) 2000, 2024, Oracle and/or its affiliates.
+
+Oracle is a registered trademark of Oracle Corporation and/or its
+affiliates. Other names may be trademarks of their respective
+owners.
+
+Type 'help;' or '\h' for help. Type '\c' to clear the current input statement.
+
+mysql> create database ass9
+    -> ;
+Query OK, 1 row affected (0.01 sec)
+
+mysql> use ass9;
+Database changed
+mysql> create table stud1(roll1 int,name1 varchar(20),class1 varchar(20));
+Query OK, 0 rows affected (0.02 sec)
+
+mysql> deac stud1;
+ERROR 1064 (42000): You have an error in your SQL syntax; check the manual that corresponds to your MySQL server version for the right syntax to use near 'deac stud1' at line 1
+mysql> desc stud1;
++--------+-------------+------+-----+---------+-------+
+| Field  | Type        | Null | Key | Default | Extra |
++--------+-------------+------+-----+---------+-------+
+| roll1  | int         | YES  |     | NULL    |       |
+| name1  | varchar(20) | YES  |     | NULL    |       |
+| class1 | varchar(20) | YES  |     | NULL    |       |
++--------+-------------+------+-----+---------+-------+
+3 rows in set (0.00 sec)
+
+mysql> create table stud2(roll2 int,name2 varchar(20),class2 varchar(20));
+Query OK, 0 rows affected (0.02 sec)
+
+mysql> insert into stud1 values(1,'Krishna','SY'),(2,'Pratham','FY'),(3,'Aniket','TY'),(4,'Deep','btech'),(5,'Rahul','SY');
+Query OK, 5 rows affected (0.01 sec)
+Records: 5  Duplicates: 0  Warnings: 0
+
+mysql> select * from stud1;
++-------+---------+--------+
+| roll1 | name1   | class1 |
++-------+---------+--------+
+|     1 | Krishna | SY     |
+|     2 | Pratham | FY     |
+|     3 | Aniket  | TY     |
+|     4 | Deep    | btech  |
+|     5 | Rahul   | SY     |
++-------+---------+--------+
+5 rows in set (0.00 sec)
+
+mysql> source /Users/prathamesh/Downloads/cursor.sql
+Query OK, 0 rows affected (0.01 sec)
+
+mysql> call proc_copy();
+    -> //
+Query OK, 0 rows affected (0.01 sec)
+
+mysql> select *from stud2;
+    -> //
++-------+---------+--------+
+| roll2 | name2   | class2 |
++-------+---------+--------+
+|     1 | Krishna | SY     |
+|     2 | Pratham | FY     |
+|     3 | Aniket  | TY     |
+|     4 | Deep    | btech  |
+|     5 | Rahul   | SY     |
++-------+---------+--------+
+5 rows in set (0.00 sec)
+
+mysql>
+
+
+
+
+
+

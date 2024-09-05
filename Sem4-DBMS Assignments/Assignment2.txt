@@ -1,0 +1,231 @@
+/*DBMS ass2 - Design at least 10 SQL queries for suitable database application using SQL DML statements: Insert,
+Select, Update, Delete with operators, functions, and set operator, all types of Join, Sub-Query and View.*/
+
+CREATE DATABASE company;
+USE company;
+
+/*1. Create Employees Table Query: Creating a table named employees within the company database.*/
+
+CREATE TABLE employees (
+    id INT PRIMARY KEY,
+    name VARCHAR(50),
+    department_id INT,
+    salary DECIMAL(10, 2)
+);
+
+/*2.Insert Query: Inserting a new record into a table;*/
+
+INSERT INTO employees (id, name, department_id, salary)
+VALUES (1, 'John Doe', 1, 50000),
+       (2, 'Jane Smith', 2, 60000),
+       (3, 'Michael Johnson', 3, 70000),
+       (4, 'Mary Prim', 1, 75000),
+       (5, 'Mike Hussy', 2, 75000);
+       
+
+
+/*3.*Select Query with Operators: Selecting records  from a table with conditions
+and using logical operators*/
+
+SELECT * FROM employees;
+
+Output:
++----+-----------------+---------------+----------+
+| id | name            | department_id | salary   |
++----+-----------------+---------------+----------+
+|  1 | John Doe        |             1 | 50000.00 |
+|  2 | Jane Smith      |             2 | 60000.00 |
+|  3 | Michael Johnson |             3 | 70000.00 |
+|  4 | Mary Prim       |             1 | 75000.00 |
+|  5 | Mike Hussy      |             2 | 75000.00 |
++----+-----------------+---------------+----------+
+
+/* SELECT query using condition and logical operators*/
+
+SELECT * FROM employees
+WHERE id > 1 AND salary > 60000;
+
+Output:
++----+-----------------+---------------+----------+
+| id | name            | department_id | salary   |
++----+-----------------+---------------+----------+
+|  3 | Michael Johnson |             3 | 70000.00 |
+|  4 | Mary Prim       |             1 | 75000.00 |
+|  5 | Mike Hussy      |             2 | 75000.00 |
++----+-----------------+---------------+----------+
+
+/*Update Query: Updating existing records in a table.*/
+
+UPDATE employees
+SET name = 'Tom Cruiz'
+WHERE id = 1;
+
+SELECT * FROM employees;
+
+Output:
++----+-----------------+---------------+----------+
+| id | name            | department_id | salary   |
++----+-----------------+---------------+----------+
+|  1 | Tom Cruiz       |             1 | 50000.00 |
+|  2 | Jane Smith      |             2 | 60000.00 |
+|  3 | Michael Johnson |             3 | 70000.00 |
+|  4 | Mary Prim       |             1 | 75000.00 |
+|  5 | Mike Hussy      |             2 | 75000.00 |
++----+-----------------+---------------+----------+
+
+/*Delete Query with Operators: Deleting records from a table with conditions.*/
+
+DELETE FROM employees
+WHERE  salary < 60000;
+SELECT * FROM employees;
+
+Output:
++----+-----------------+---------------+----------+
+| id | name            | department_id | salary   |
++----+-----------------+---------------+----------+
+|  2 | Jane Smith      |             2 | 60000.00 |
+|  3 | Michael Johnson |             3 | 70000.00 |
+|  4 | Mary Prim       |             1 | 75000.00 |
+|  5 | Mike Hussy      |             2 | 75000.00 |
++----+-----------------+---------------+----------+
+
+
+// Union Set Operator:
+
+mysql> CREATE DATABASE Prasad;
+Query OK, 1 row affected (0.01 sec)
+
+mysql> USE Prasad;
+
+mysql> CREATE TABLE Employees ( EmployeeID int PRIMARY KEY, FirstName CHAR(100),
+LastName CHAR(100),Age INT, DepartmentID INT );
+Query OK, 0 rows affected (0.04 sec)
+
+mysql> INSERT INTO Employees VALUES (1,'Gokul','Raktate_Patil',20,100),(2,'Krishna','Shelar_Don',20,101),(3,'Prasad','Parjane_Patil',19,102);
+mysql>  SELECT * FROM Employees;
++------------+-----------+---------------+------+--------------+
+| EmployeeID | FirstName | LastName      | Age  | DepartmentID |
++------------+-----------+---------------+------+--------------+
+|          1 | Gokul     | Raktate_Patil |   20 |          100 |
+|          2 | Krishna   | Shelar_Don    |   20 |          101 |
+|          3 | Prasad    | Parjane_Patil |   19 |          102 |
++------------+-----------+---------------+------+--------------+
+3 rows in set (0.00 sec)
+
+mysql> CREATE TABLE Department (DepartmentID INT PRIMARY KEY,DepartmentName VARCHAR(100) );
+Query OK, 0 rows affected (0.04 sec)
+
+mysql> INSERT INTO Department VALUES (100,'Sales'),(101,'Marketing'),(102,'HR');
+Query OK, 3 rows affected (0.01 sec)
+Records: 3  Duplicates: 0  Warnings: 0
+
+mysql>  SELECT * FROM Department;
++--------------+----------------+
+| DepartmentID | DepartmentName |
++--------------+----------------+
+|          100 | Sales          |
+|          101 | Marketing      |
+|          102 | HR             |
++--------------+----------------+
+3 rows in set (0.00 sec)
+
+
+// SET UNION OPERATION
+mysql> SELECT EmployeeID, FirstName, LastName FROM Employees WHERE DepartmentID = 100 UNION SELECT EmployeeID, FirstName, LastName FROM Employees WHERE Depa
+rtmentID = 101;
++------------+-----------+---------------+
+| EmployeeID | FirstName | LastName      |
++------------+-----------+---------------+
+|          1 | Gokul     | Raktate_Patil |
+|          2 | Krishna   | Shelar_Don    |
++------------+-----------+---------------+
+2 rows in set (0.01 sec)
+
+// inner join
+// The INNER JOIN keyword selects records that have matching values in both tables.
+// SYNTAX : SELECT column_name(s)
+            FROM table1
+            INNER JOIN table2
+            ON table1.column_name = table2.column_name;
+			
+mysql>  SELECT * FROM Department;
++--------------+----------------+
+| DepartmentID | DepartmentName |
++--------------+----------------+
+|          100 | Sales          |
+|          101 | Marketing      |
+|          102 | HR             |
+|          103 | Testing        |
++--------------+----------------+
+4 rows in set (0.00 sec)
+
+mysql>  SELECT * FROM Employees;
++------------+-----------+---------------+------+--------------+
+| EmployeeID | FirstName | LastName      | Age  | DepartmentID |
++------------+-----------+---------------+------+--------------+
+|          1 | Gokul     | Raktate_Patil |   20 |          100 |
+|          2 | Krishna   | Shelar_Don    |   20 |          101 |
+|          3 | Prasad    | Parjane_Patil |   19 |          102 |
++------------+-----------+---------------+------+--------------+
+3 rows in set (0.00 sec)
+
+mysql> SELECT e.EmployeeID, e.FirstName, e.LastName, e.Age, e.DepartmentID FROM Employees e INNER JOIN Department d ON e.DepartmentID = d.DepartmentID;
++------------+-----------+---------------+------+--------------+
+| EmployeeID | FirstName | LastName      | Age  | DepartmentID |
++------------+-----------+---------------+------+--------------+
+|          1 | Gokul     | Raktate_Patil |   20 |          100 |
+|          2 | Krishna   | Shelar_Don    |   20 |          101 |
+|          3 | Prasad    | Parjane_Patil |   19 |          102 |
++------------+-----------
+
+// SUB QUERY
+
+mysql>  SELECT * FROM Department;
++--------------+----------------+
+| DepartmentID | DepartmentName |
++--------------+----------------+
+|          100 | Sales          |
+|          101 | Marketing      |
+|          102 | HR             |
+|          103 | Testing        |
++--------------+----------------+
+4 rows in set (0.00 sec)
+
+mysql>  SELECT * FROM Employees;
++------------+-----------+---------------+------+--------------+
+| EmployeeID | FirstName | LastName      | Age  | DepartmentID |
++------------+-----------+---------------+------+--------------+
+|          1 | Gokul     | Raktate_Patil |   20 |          100 |
+|          2 | Krishna   | Shelar_Don    |   20 |          101 |
+|          3 | Prasad    | Parjane_Patil |   19 |          102 |
++------------+-----------+---------------+------+--------------+
+3 rows in set (0.00 sec)
+
+
+ mysql> SELECT EmployeeID, FirstName, LastName FROM Employees WHERE DepartmentID IN (SELECT DepartmentID FROM Department WHERE DepartmentName = 'Sales');
++------------+-----------+---------------+
+| EmployeeID | FirstName | LastName      |
++------------+-----------+---------------+
+|          1 | Gokul     | Raktate_Patil |
++------------+-----------+---------------+
+1 row in set (0.01 sec)
+
+
+// SQL View
+SQL provides the concept of VIEW, which hides the complexity of the data and restricts unnecessary access to the database. It permits the users to access only a 
+particular column rather than the whole data of the table.
+
+The View in the Structured Query Language is considered as the virtual table, which depends on the result-set of the predefined SQL statement.
+
+Like the SQL tables, Views also store data in rows and columns, but the rows do not have any physical existence in the database.
+
+mysql> CREATE VIEW EmployeeDetails AS SELECT e.EmployeeID, e.FirstName, e.LastName, e.Age, e.DepartmentID FROM Employees e WHERE EmployeeID = 3;
+Query OK, 0 rows affected (0.02 sec)
+
+mysql> SELECT * FROM EmployeeDetails;
++------------+-----------+---------------+------+--------------+
+| EmployeeID | FirstName | LastName      | Age  | DepartmentID |
++------------+-----------+---------------+------+--------------+
+|          3 | Prasad    | Parjane_Patil |   19 |          102 |
++------------+-----------+---------------+------+--------------+
+1 row in set (0.01 sec)

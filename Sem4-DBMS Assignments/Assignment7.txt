@@ -1,0 +1,122 @@
+
+PS C:\Users\prathamesh> mysql -u root -p
+Enter password: ****
+Welcome to the MySQL monitor.  Commands end with ; or \g.
+Your MySQL connection id is 15
+Server version: 8.0.37 MySQL Community Server - GPL
+
+Copyright (c) 2000, 2024, Oracle and/or its affiliates.
+
+Oracle is a registered trademark of Oracle Corporation and/or its
+affiliates. Other names may be trademarks of their respective
+owners.
+
+Type 'help;' or '\h' for help. Type '\c' to clear the current input statement.
+
+mysql> show databases;
++--------------------+
+| Database           |
++--------------------+
+| ass8               |
+| ass9               |
+| information_schema |
+| mysql              |
+| performance_schema |
+| sys                |
++--------------------+
+6 rows in set (0.00 sec)
+
+mysql> use ass8;
+Database changed
+mysql> create table Library(BookNo int,BookName varchar(20),BookPublished varchar(20),BookCost int);
+Query OK, 0 rows affected (0.02 sec)
+
+mysql> create table Lib_Audit(Id int primary key auto_increment,Operation varchar(20),OperationTime varchar(20),BookNo int,BookName varchar(20),BookPublished varchar(20),BookCost int);
+Query OK, 0 rows affected (0.01 sec)
+
+mysql> desc Library;
++---------------+-------------+------+-----+---------+-------+
+| Field         | Type        | Null | Key | Default | Extra |
++---------------+-------------+------+-----+---------+-------+
+| BookNo        | int         | YES  |     | NULL    |       |
+| BookName      | varchar(20) | YES  |     | NULL    |       |
+| BookPublished | varchar(20) | YES  |     | NULL    |       |
+| BookCost      | int         | YES  |     | NULL    |       |
++---------------+-------------+------+-----+---------+-------+
+4 rows in set (0.00 sec)
+
+mysql> desc Lib_Audit;
++---------------+-------------+------+-----+---------+----------------+
+| Field         | Type        | Null | Key | Default | Extra          |
++---------------+-------------+------+-----+---------+----------------+
+| Id            | int         | NO   | PRI | NULL    | auto_increment |
+| Operation     | varchar(20) | YES  |     | NULL    |                |
+| OperationTime | varchar(20) | YES  |     | NULL    |                |
+| BookNo        | int         | YES  |     | NULL    |                |
+| BookName      | varchar(20) | YES  |     | NULL    |                |
+| BookPublished | varchar(20) | YES  |     | NULL    |                |
+| BookCost      | int         | YES  |     | NULL    |                |
++---------------+-------------+------+-----+---------+----------------+
+7 rows in set (0.00 sec)
+
+mysql> insert into Library values(1,'DBMS','Navneet',1000),(2,'ADS','Navneet',2000),(3,'OSA','Navneet',1500),(4,'AI','Navneet',2500),(5,'Python','pybooks',3000);
+Query OK, 5 rows affected (0.00 sec)
+Records: 5  Duplicates: 0  Warnings: 0
+
+mysql> select * from Library;
++--------+----------+---------------+----------+
+| BookNo | BookName | BookPublished | BookCost |
++--------+----------+---------------+----------+
+|      1 | DBMS     | Navneet       |     1000 |
+|      2 | ADS      | Navneet       |     2000 |
+|      3 | OSA      | Navneet       |     1500 |
+|      4 | AI       | Navneet       |     2500 |
+|      5 | Python   | pybooks       |     3000 |
++--------+----------+---------------+----------+
+5 rows in set (0.00 sec)
+
+mysql> delimiter //
+mysql> create trigger t1 before update on Library for each row
+    -> begin
+    -> insert into Lib_Audit values(NULL,'update',Now(),old.BooKNo,old.BookName,old.BookPublished,old.BookCost);
+    -> end;
+    -> //
+Query OK, 0 rows affected (0.01 sec)
+
+mysql> update Library set BookName="ML" where BookNo=1;
+    -> //
+Query OK, 1 row affected (0.01 sec)
+Rows matched: 1  Changed: 1  Warnings: 0
+
+mysql> select * from Lib_Audit;
+    -> //
++----+-----------+---------------------+--------+----------+---------------+----------+
+| Id | Operation | OperationTime       | BookNo | BookName | BookPublished | BookCost |
++----+-----------+---------------------+--------+----------+---------------+----------+
+|  1 | update    | 2024-05-16 16:44:09 |      1 | DBMS     | Navneet       |     1000 |
++----+-----------+---------------------+--------+----------+---------------+----------+
+1 row in set (0.00 sec)
+
+mysql> delimiter //
+mysql> create trigger t2 before delete on Library for each row
+    -> begin
+    -> insert into Lib_Audit values (NULL,'delete',now(),old.BookNo,old.BookName,old.BookPublished,old.BookCost);
+    -> end;
+    -> //
+Query OK, 0 rows affected (0.01 sec)
+
+mysql> delete from Library where BookNo=4;
+    -> //
+Query OK, 1 row affected (0.01 sec)
+
+mysql> select * from Lib_Audit;
+    -> //
++----+-----------+---------------------+--------+----------+---------------+----------+
+| Id | Operation | OperationTime       | BookNo | BookName | BookPublished | BookCost |
++----+-----------+---------------------+--------+----------+---------------+----------+
+|  1 | update    | 2024-05-16 16:44:09 |      1 | DBMS     | Navneet       |     1000 |
+|  2 | delete    | 2024-05-16 16:47:31 |      4 | AI       | Navneet       |     2500 |
++----+-----------+---------------------+--------+----------+---------------+----------+
+2 rows in set (0.00 sec)
+
+mysql>

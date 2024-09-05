@@ -1,0 +1,92 @@
+ASSIGNMENT 3 - Implementation of Primary Key, Foreign Key, View and Index
+/*STEP 1 - Create 2 tables 
+
+         Table 1 - Department
+		 Attributes - department id integer as primary key, salary integer
+		 
+		 Table 2 - Employess
+		 Attributes - emp id integer as primary key, name vachar, post varchar, department id as foreign key*/
+		 
+		 
+		 	 
+mysql> CREATE DATABASE Prathamesh;
+Query OK, 1 row affected (0.03 sec)
+
+mysql> use Prathamesh;
+Database changed
+mysql> CREATE TABLE Department ( department_id INT PRIMARY KEY,salary INT);
+Query OK, 0 rows affected (0.10 sec)
+
+mysql> INSERT INTO Department VALUES (1,10000),(2,20000),(3,30000),(4,40000),(5,50000);
+Query OK, 5 rows affected (0.01 sec)
+Records: 5  Duplicates: 0  Warnings: 0
+
+mysql> SELECT * FROM Department;
++---------------+--------+
+| department_id | salary |
++---------------+--------+
+|             1 |  10000 |
+|             2 |  20000 |
+|             3 |  30000 |
+|             4 |  40000 |
+|             5 |  50000 |
++---------------+--------+
+5 rows in set (0.00 sec)
+
+mysql> CREATE TABLE Employees ( emp_id INT PRIMARY KEY,name VARCHAR(255),  post VARCHAR(255),department_id INT,FOREIGN KEY (department_id) REFERENCES Department(department_id));
+mysql> INSERT INTO Employees VALUES (90,'Pratham','Manager',1), 
+                                    (91,'Krishna','Developer', 2),
+									(92,'Aniket', 'CA',3),
+									(93, 'Harsh', 'HR', 4),
+									(94, 'Ram', 'DBA',5);
+Query OK, 5 rows affected (0.01 sec)
+mysql> SELECT * FROM  Employees;
++--------+---------+-----------+---------------+
+| emp_id | name    | post      | department_id |
++--------+---------+-----------+---------------+
+|     90 | Pratham | Manager   |             1 |
+|     91 | Krishna | Developer |             2 |
+|     92 | Aniket  | CA        |             3 |
+|     93 | Harsh   | HR        |             4 |
+|     94 | Ram     | DBA       |             5 |
++--------+---------+-----------+---------------+
+
+1. View:
+/*A view is a virtual table based on the result of an SQL statement.
+It allows you to encapsulate complex queries into a single, reusable object.
+
+Let's create a view named "EmployeeDetails" that joins the "Employees" and "Department" 
+tables to provide information about employees along with their department salaries:*/
+
+mysql> CREATE VIEW EmployeeDetails AS SELECT e.emp_id, e.name, e.post, d.department_id, d.salary 
+       FROM Employees e JOIN Department d ON e.department_id =d.department_id;
+ 
+Query OK, 0 rows affected (0.01 sec)
+
+mysql> SELECT * FROM EmployeeDetails;
++--------+---------+-----------+---------------+--------+
+| emp_id | name    | post      | department_id | salary |
++--------+---------+-----------+---------------+--------+
+|     90 | Pratham  | Manager   |             1 |  10000 |
+|     91 | Krishna  | Developer |             2 |  20000 |
+|     92 | Aniket   | CA        |             3 |  30000 |
+|     93 | Harsh    | HR        |             4 |  40000 |
+|     94 | Ram      | DBA       |             5 |  50000 |
++--------+---------+-----------+---------------+--------+
+
+2. Index:
+/*An index is a data structure that improves the speed of data retrieval operations on a database 
+table at the cost of additional space and decreased performance on data modification operations.
+
+Let's create an index on the "emp_id" column of the "Employees" table to improve the
+speed of queries that involve searching or sorting based on the employee ID:*/
+
+mysql> CREATE INDEX idx_emp_id ON Employees (emp_id);
+Query OK, 0 rows affected (0.11 sec)
+Records: 0  Duplicates: 0  Warnings: 0
+
+/*Once you've created the index idx_emp_id on the emp_id column in the Employees table, the database management system will 
+automatically utilize this index to improve the performance of queries that involve searching or sorting based on the emp_id column.
+
+You don't need to explicitly use the index in your queries. The database optimizer will decide whether
+ to use the index based on factors like query complexity, available indexes, and table statistics*/.

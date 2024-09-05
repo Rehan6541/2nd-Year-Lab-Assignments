@@ -1,0 +1,81 @@
+mysql> show databases;
++--------------------+
+| Database           |
++--------------------+
+| information_schema |
+| mysql              |
+| performance_schema |
+| prathamesh             |
+| sys                |
++--------------------+
+
+mysql> CREATE DATABASE Joins;
+
+mysql> use Joins;
+
+// CREATE TWO TABLES
+
+// 1. EMPLOYEE
+
+mysql> CREATE TABLE employee( emp_name varchar(90), city varchar(60));
+
+mysql> INSERT INTO employee VALUES('HARI','KOPARGAON'),('OM','MUMBAI'),('JAY','NASHIK');
+
+mysql> SELECT * FROM employee;
+
++----------+-----------+
+| emp_name | city      |
++----------+-----------+
+| HARI     | KOPARGAON |
+| OM       | MUMBAI    |
+| JAY      | NASHIK    |
++----------+-----------+
+
+// 2. emp_salary
+
+mysql> CREATE TABLE emp_salary(emp_name varchar(48),dept varchar(20),salary integer);
+Query OK, 0 rows affected (0.04 sec)
+
+mysql> INSERT INTO emp_salary VALUES('HARI','SALES',1000),('OM','SALES',2000),('SAI','PRODUCTION',3000);
+Query OK, 3 rows affected (0.02 sec)
+
+mysql> SELECT * FROM emp_salary;
++----------+------------+--------+
+| emp_name | dept       | salary |
++----------+------------+--------+
+| HARI     | SALES      |   1000 |
+| OM       | SALES      |   2000 |
+| SAI      | PRODUCTION |   3000 |
++----------+------------+--------+
+
+// NOW,PERFORM INNER JOIN ON THESE TWO TABLES
+
+mysql> SELECT employee.emp_name,emp_salary.salary FROM employee INNER JOIN emp_salary ON employee.emp_name=emp_salary.emp_name;
++----------+--------+
+| emp_name | salary |
++----------+--------+
+| HARI     |   1000 |
+| OM       |   2000 |
++----------+--------+
+
+// NOW,PERFORM LEFT OUTER JOIN ON SAME TABLES
+
+mysql> SELECT employee.emp_name,salary FROM employee LEFT OUTER JOIN emp_salary ON employee.emp_name=emp_salary.emp_name;
++----------+--------+
+| emp_name | salary |
++----------+--------+
+| HARI     |   1000 |
+| OM       |   2000 |
+| JAY      |   NULL |
++----------+--------+
+
+// NOW,PERFORM RIGHT OUTER JOIN ON SAME TABLES
+
+mysql> SELECT employee.emp_name,salary FROM employee RIGHT OUTER JOIN emp_salary ON employee.emp_name=emp_salary.emp_name;
++----------+--------+
+| emp_name | salary |
++----------+--------+
+| HARI     |   1000 |
+| OM       |   2000 |
+| NULL     |   3000 |
++----------+--------+

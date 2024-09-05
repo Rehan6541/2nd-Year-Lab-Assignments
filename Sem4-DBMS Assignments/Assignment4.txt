@@ -1,0 +1,160 @@
+mysql> CREATE DATABASE prathamesh;
+Query OK, 1 row affected (0.01 sec)
+
+mysql> use prathamesh;
+Database changed
+
+mysql> CREATE TABLE Project ( pid INT PRIMARY KEY, pname VARCHAR(255),    pdescription VARCHAR(255), pcategory VARCHAR(50));
+
+mysql> INSERT INTO Project VALUES  (1, 'Project A', 'Description of Project A', 'Hardware'),(2, 'Project B', 'Description of Project B', 'software');
+
+mysql> SELECT * FROM Project;
+
++-----+-----------+--------------------------+-----------+
+| pid | pname     | pdescription             | pcategory |
++-----+-----------+--------------------------+-----------+
+|   1 | Project A | Description of Project A | Hardware  |
+|   2 | Project B | Description of Project B | software  |
++-----+-----------+--------------------------+-----------+
+
+mysql> CREATE TABLE Department ( did INT PRIMARY KEY,  pid INT,dname VARCHAR(100),FOREIGN KEY (pid) REFERENCES Project(pid));
+
+mysql> INSERT INTO Department (did, pid, dname)VALUES (1, 1, 'Department X'),(3, 2, 'Department Z');tment (did, pid, dname)
+
+mysql> SELECT * FROM Department;
+
++-----+------+--------------+
+| did | pid  | dname        |
++-----+------+--------------+
+|   1 |    1 | Department X |
+|   3 |    2 | Department Z |
++-----+------+--------------+
+
+mysql> CREATE TABLE Employee (eid INT PRIMARY KEY, ename VARCHAR(100),salary DECIMAL(10, 2),did INT, pid INT,dname VARCHAR(100),
+       FOREIGN KEY (did) REFERENCES Department(did),FOREIGN KEY (pid) REFERENCES Project(pid));
+	   
+mysql> INSERT INTO Employee VALUES  (1, 'John Doe', 50000, 1, 1, 'Department X'),(3, 'Michael Johnson', 55000, 3, 2, 'Department Z');
+Query OK, 2 rows affected (0.01 sec)
+
+mysql> SELECT * FROM Employee;
+
++-----+-----------------+----------+------+------+--------------+
+| eid | ename           | salary   | did  | pid  | dname        |
++-----+-----------------+----------+------+------+--------------+
+|   1 | John Doe        | 50000.00 |    1 |    1 | Department X |
+|   3 | Michael Johnson | 55000.00 |    3 |    2 | Department Z |
++-----+-----------------+----------+------+------+--------------+
+ 
+ 
+ // 1. DTSPLAY NAME OF EMPLOYESS WORKING ON Project A
+ 
+ mysql> SELECT e.ename FROM Employee e JOIN Department d ON e.did = d.did 
+       JOIN Project p ON d.pid = p.pid WHERE p.pname = 'Project A';
++----------+
+| ename    |
++----------+
+| John Doe |
++----------+
+
+
+// 2. display the details of employees belonging to Department X
+
+SELECT *
+FROM Employee
+WHERE did = (
+    SELECT did
+    FROM Department
+    WHERE dname = 'Department X'
+);
++-----+----------+----------+------+------+--------------+
+| eid | ename    | salary   | did  | pid  | dname        |
++-----+----------+----------+------+------+--------------+
+|   1 | John Doe | 50000.00 |    1 |    1 | Department X |
++-----+----------+----------+------+------+--------------+
+
+// 3. Display name of employee whose starting name letter is 'J'
+
+mysql> SELECT ename FROM Employee WHERE ename LIKE 'J%';
++----------+
+| ename    |
++----------+
+| John Doe |
++----------+
+
+// 4. Arrange names of employee, project and department in alphabetical order
+/*To arrange the names of employees, projects, and departments in alphabetical order, you can use the ORDER BY clause in your SQL query.*/
+
+SELECT ename AS name, 'Employee' AS type
+FROM Employee
+UNION
+SELECT pname AS name, 'Project' AS type
+FROM Project
+UNION
+SELECT dname AS name, 'Department' AS type
+FROM Department
+ORDER BY name;
+
++-----------------+------------+
+| name            | type       |
++-----------------+------------+
+| Department X    | Department |
+| Department Z    | Department |
+| John Doe        | Employee   |
+| Michael Johnson | Employee   |
+| Project A       | Project    |
+| Project B       | Project    |
++-----------------+------------+
+
+// 5. Display names of employees whose dname is not dname is not 'Department X' and did is 3
+
+SELECT ename
+FROM Employee
+WHERE did = 3 AND dname != 'Department X';
+
++-----------------+
+| ename           |
++-----------------+
+| Michael Johnson |
++-----------------+
+
+// 6. List the project details where employee working is  John Doe
+
+SELECT * FROM Project WHERE pid IN (  SELECT d.pid WHERE pid IN ( SELEC' at line 1
+mysql> SELECT * FROM Project WHERE pid IN (  SELECT d.pid FROM Department d JOIN Employee e ON d.did = e.did WHERE e.ename = 'John Doe' );
+
++-----+-----------+--------------------------+-----------+
+| pid | pname     | pdescription             | pcategory |
++-----+-----------+--------------------------+-----------+
+|   1 | Project A | Description of Project A | Hardware  |
++-----+-----------+--------------------------+-----------+
+
+// 7. List the employee with minimum and maximum salary according to their department
+
+SELECT 
+    e.did,
+    d.dname,
+    MIN(e.salary) AS min_salary,
+    MAX(e.salary) AS max_salary
+FROM 
+    Employee e
+JOIN 
+    Department d ON e.did = d.did
+GROUP BY 
+    e.did, d.dname;
+
++------+--------------+------------+------------+
+| did  | dname        | min_salary | max_salary |
++------+--------------+------------+------------+
+|    1 | Department X |   50000.00 |   50000.00 |
+|    3 | Department Z |   55000.00 |   55000.00 |
++------+--------------+------------+------------+
+
+// 8. Display project name whose category is either hardware or software
+
+mysql> SELECT pname FROM Project WHERE pcategory IN ('hardware', 'software');
++-----------+
+| pname     |
++-----------+
+| Project A |
+| Project B |
++-----------+

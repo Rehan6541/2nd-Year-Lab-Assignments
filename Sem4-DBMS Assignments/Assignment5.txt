@@ -1,0 +1,269 @@
+
+mysql> show databases;
++--------------------+
+| Database           |
++--------------------+
+| information_schema |
+| mysql              |
+| performance_schema |
+| prathamesh             |
+| sys                |
++--------------------+
+5 rows in set (0.07 sec)
+
+mysql> use prathamesh;
+Database changed
+mysql> CREATE TABLE Branch ( BranchName VARCHAR(50) PRIMARY KEY, BranchCity VARCHAR(50), Assets DECIMAL(18, 2));
+Query OK, 0 rows affected (0.08 sec)
+
+mysql> INSERT INTO Branch VALUES ('Main Branch', 'New York', 1000000), ('Downtown Branch', 'New York', 750000),  ('West Branch', 'Los Angeles', 900000);
+Query OK, 3 rows affected (0.02 sec)
+Records: 3  Duplicates: 0  Warnings: 0
+
+mysql> SELECT * FROM Branch;
++-----------------+-------------+------------+
+| BranchName      | BranchCity  | Assets     |
++-----------------+-------------+------------+
+| Downtown Branch | New York    |  750000.00 |
+| Main Branch     | New York    | 1000000.00 |
+| West Branch     | Los Angeles |  900000.00 |
++-----------------+-------------+------------+
+3 rows in set (0.00 sec)
+
+mysql> CREATE TABLE Customer ( CustomerName VARCHAR(50) PRIMARY KEY, CustomerStreet VARCHAR(100), CustomerCity VARCHAR(50));
+Query OK, 0 rows affected (0.03 sec)
+
+mysql> INSERT INTO Customer VALUES  ('John Smith', '123 Main St', 'New York'), ('Alice Johnson', '456 Elm St', 'Los Angeles'),  ('Michael Lee', '789 Oak St', 'Chicago');
+Query OK, 3 rows affected (0.01 sec)
+Records: 3  Duplicates: 0  Warnings: 0
+
+mysql> SELECT * FROM Customer;
++---------------+----------------+--------------+
+| CustomerName  | CustomerStreet | CustomerCity |
++---------------+----------------+--------------+
+| Alice Johnson | 456 Elm St     | Los Angeles  |
+| John Smith    | 123 Main St    | New York     |
+| Michael Lee   | 789 Oak St     | Chicago      |
++---------------+----------------+--------------+
+3 rows in set (0.00 sec)
+
+mysql> CREATE TABLE Loan (LoanNumber INT PRIMARY KEY,  BranchName VARCHAR(50),  Amount DECIMAL(18, 2),    FOREIGN KEY (BranchName) REFERENCES Branch(BranchName));
+Query OK, 0 rows affected (0.08 sec)
+
+mysql> INSERT INTO Loan VALUES (101, 'Main Branch', 50000), (102, 'Downtown Branch', 75000), (103, 'Main Branch', 100000);
+Query OK, 3 rows affected (0.01 sec)
+Records: 3  Duplicates: 0  Warnings: 0
+
+mysql> SELECT * FROM Loan;
++------------+-----------------+-----------+
+| LoanNumber | BranchName      | Amount    |
++------------+-----------------+-----------+
+|        101 | Main Branch     |  50000.00 |
+|        102 | Downtown Branch |  75000.00 |
+|        103 | Main Branch     | 100000.00 |
++------------+-----------------+-----------+
+3 rows in set (0.00 sec)
+
+mysql> CREATE TABLE Borrower (   CustomerName VARCHAR(50), LoanNumber INT,  PRIMARY KEY (CustomerName, LoanNumber),  FOREIGN KEY (CustomerName) REFERENCES Customer(CustomerName), FOREIGN KEY (LoanNumber) REFERENCES Loan(LoanNumber));
+Query OK, 0 rows affected (0.08 sec)
+
+
+mysql> INSERT INTO Borrower VALUES  ('John Smith', 101), ('Alice Johnson', 102),  ('Michael Lee', 103);
+Query OK, 3 rows affected (0.01 sec)
+Records: 3  Duplicates: 0  Warnings: 0
+
+mysql> SELECT * FROM Borrower;
++---------------+------------+
+| CustomerName  | LoanNumber |
++---------------+------------+
+| John Smith    |        101 |
+| Alice Johnson |        102 |
+| Michael Lee   |        103 |
++---------------+------------+
+3 rows in set (0.00 sec)
+
+mysql> CREATE TABLE Account (AccountNumber INT PRIMARY KEY, BranchName VARCHAR(50),Balance DECIMAL(18, 2), FOREIGN KEY (BranchName) REFERENCES Branch(BranchName));
+Query OK, 0 rows affected (0.08 sec)
+
+mysql> INSERT INTO Account (AccountNumber, BranchName, Balance)VALUES (1001, 'Main Branch', 10000), (1002, 'Downtown Branch', 5000),   (1003, 'West Branch', 15000);
+Query OK, 3 rows affected (0.01 sec)
+Records: 3  Duplicates: 0  Warnings: 0
+
+mysql> SELECT * FROM Account;
++---------------+-----------------+----------+
+| AccountNumber | BranchName      | Balance  |
++---------------+-----------------+----------+
+|          1001 | Main Branch     | 10000.00 |
+|          1002 | Downtown Branch |  5000.00 |
+|          1003 | West Branch     | 15000.00 |
++---------------+-----------------+----------+
+3 rows in set (0.00 sec)
+
+mysql> CREATE TABLE Depositor (    CustomerName VARCHAR(50),AccountNumber INT,PRIMARY KEY (CustomerName, AccountNumber), FOREIGN KEY (CustomerName) REFERENCES Customer(CustomerName),FOREIGN KEY (AccountNumber) REFERENCES Account(AccountNumber));
+Query OK, 0 rows affected (0.09 sec)
+
+mysql> INSERT INTO Depositor VALUES ('John Smith', 1001), ('Alice Johnson', 1002),  ('Michael Lee', 1003);
+Query OK, 3 rows affected (0.01 sec)
+Records: 3  Duplicates: 0  Warnings: 0
+
+
+mysql> SELECT * FROM Depositor;
++---------------+---------------+
+| CustomerName  | AccountNumber |
++---------------+---------------+
+| John Smith    |          1001 |
+| Alice Johnson |          1002 |
+| Michael Lee   |          1003 |
++---------------+---------------+
+
+
+1. Find the names of all branches in the loan relations
+mysql> SELECT * FROM Loan;
++------------+-----------------+-----------+
+| LoanNumber | BranchName      | Amount    |
++------------+-----------------+-----------+
+|        101 | Main Branch     |  50000.00 |
+|        102 | Downtown Branch |  75000.00 |
+|        103 | Main Branch     | 100000.00 |
++------------+-----------------+-----------+
+
+
+2. Find the names of all branches in the loan relations and remove dublicates
+mysql> SELECT DISTINCT BranchName FROM Loan;
++-----------------+
+| BranchName      |
++-----------------+
+| Downtown Branch |
+| Main Branch     |
++-----------------+
+
+
+3. To find all the number of loans for loans made at Main Branch with loan amount greater than 60000.00
+mysql> SELECT LoanNumber FROM Loan WHERE BranchName = 'Main Branch' AND Amount > 60000.00;
++------------+
+| LoanNumber |
++------------+
+|        103 |
++------------+
+
+ 4. Find the loan number of those loans with loan amount between 40000.00 and 80000.00 
+ mysql> SELECT LoanNumber FROM Loan WHERE Amount BETWEEN 40000.00 AND 80000.00;
++------------+
+| LoanNumber |
++------------+
+|        101 |
+|        102 |
++------------+
+
+5. Find cartesian product (cross join) Borrower * Loan
+mysql> SELECT *FROM Borrower, Loan;
++---------------+------------+------------+-----------------+-----------+
+| CustomerName  | LoanNumber | LoanNumber | BranchName      | Amount    |
++---------------+------------+------------+-----------------+-----------+
+| Michael Lee   |        103 |        101 | Main Branch     |  50000.00 |
+| Alice Johnson |        102 |        101 | Main Branch     |  50000.00 |
+| John Smith    |        101 |        101 | Main Branch     |  50000.00 |
+| Michael Lee   |        103 |        102 | Downtown Branch |  75000.00 |
+| Alice Johnson |        102 |        102 | Downtown Branch |  75000.00 |
+| John Smith    |        101 |        102 | Downtown Branch |  75000.00 |
+| Michael Lee   |        103 |        103 | Main Branch     | 100000.00 |
+| Alice Johnson |        102 |        103 | Main Branch     | 100000.00 |
+| John Smith    |        101 |        103 | Main Branch     | 100000.00 |
++---------------+------------+------------+-----------------+-----------+
+
+6. Find the name, loan number and loan amount of all customers having a loan at Main Branch
+mysql> SELECT c.CustomerName, l.LoanNumber, l.Amount
+       FROM Borrower b JOIN Loan l ON b.LoanNumber = l.LoanNumber 
+	   JOIN Customer c ON b.CustomerName = c.CustomerName
+	   WHERE l.BranchName = 'Main Branch';
++--------------+------------+-----------+
+| CustomerName | LoanNumber | Amount    |
++--------------+------------+-----------+
+| John Smith   |        101 |  50000.00 |
+| Michael Lee  |        103 | 100000.00 |
++--------------+------------+-----------+
+
+7. Find names of all branches that have assests greater than West Branch
+mysql> SELECT BranchName FROM Branch 
+       WHERE Assets > (SELECT Assets FROM Branch
+       WHERE BranchName = 'West Branch');
++-------------+
+| BranchName  |
++-------------+
+| Main Branch |
++-------------+
+
+8. Find the names of all customers whose street includes the substring "Main".
+mysql> SELECT CustomerName FROM Customer 
+       WHERE CustomerStreet LIKE '%Main%';
++--------------+
+| CustomerName |
++--------------+
+| John Smith   |
++--------------+
+
+9. Find the names of all customers whose starting letter is 'a'
+mysql> SELECT CustomerName FROM Customer  
+       WHERE CustomerName LIKE 'a%';
++---------------+
+| CustomerName  |
++---------------+
+| Alice Johnson |
++---------------+
+
+10 Find the al the customers who have a loan, an account or both
+mysql> SELECT CustomerName FROM Borrower 
+       UNION SELECT CustomerName FROM Depositor;
++---------------+
+| CustomerName  |
++---------------+
+| John Smith    |
+| Alice Johnson |
+| Michael Lee   |
++---------------+
+
+11. Find all the customers who have both loan and account.
+mysql> SELECT CustomerName FROM Borrower
+       INTERSECT SELECT CustomerName FROM Depositor;
++---------------+
+| CustomerName  |
++---------------+
+| John Smith    |
+| Alice Johnson |
+| Michael Lee   |
++---------------+
+
+12.Find all the customers who have an account but no loan.
+mysql> SELECT CustomerName FROM Depositor
+       EXCEPT SELECT CustomerName FROM Borrower;
+Empty set (0.00 sec)
+
+13. FInd average account blanace at Down Town branch.
+mysql> SELECT AVG(Balance) AS AverageBalance 
+       FROM Account WHERE BranchName = 'Downtown Branch';
++----------------+
+| AverageBalance |
++----------------+
+|    5000.000000 |
++----------------+
+
+14. Find the number of tuples in the customer relation.
+mysql> SELECT COUNT(*) AS NumberOfTuples FROM Customer;
++----------------+
+| NumberOfTuples |
++----------------+
+|              3 |
++----------------+
+
+15.  Find number of depositor for each branch
+mysql> SELECT a.BranchName, COUNT(*) AS NumberOfDepositors 
+       FROM Account a JOIN Depositor d
+	   ON a.AccountNumber = d.AccountNumber
+	   GROUP BY a.BranchName;
++-----------------+--------------------+
+| BranchName      | NumberOfDepositors |
++-----------------+--------------------+
+| Downtown Branch |                  1 |
+| Main Branch     |                  1 |
+| West Branch     |                  1 |
++-----------------+--------------------+

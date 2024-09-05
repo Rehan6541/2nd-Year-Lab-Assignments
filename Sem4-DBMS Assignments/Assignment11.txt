@@ -1,0 +1,109 @@
+Assignment 11:- Implement CRUID operations in MongoDB
+
+
+
+C:\Users\prathamesh>mongosh  (for windows)
+C:\Users\prathamesh>mongo  (for ubuntu)
+
+/*Current Mongosh Log ID: 663a59bfbcf789cd2146b798
+Connecting to:          mongodb://127.0.0.1:27017/?directConnection=true&serverSelectionTimeoutMS=2000&appName=mongosh+2.2.5
+Using MongoDB:          7.0.9
+Using Mongosh:          2.2.5
+
+For mongosh info see: https://docs.mongodb.com/mongodb-shell/
+
+
+To help improve our products, anonymous usage data is collected and sent to MongoDB periodically (https://www.mongodb.com/legal/privacy-policy).
+You can opt-out by running the disableTelemetry() command.
+
+------
+   The server generated these startup warnings when booting
+   2024-05-07T22:04:41.358+05:30: Access control is not enabled for the database. Read and write access to data and configuration is unrestricted
+------
+*/
+test> use prathamesh              //to create database
+
+switched to db prathamesh
+
+prathamesh> db.createCollection("student")                  //to create collection
+{ ok: 1 }
+
+prathamesh> db.student.insert({"rollno":1, "name":"Prathamesh", "class":"SYA"})     //insert
+{
+  acknowledged: true,
+  insertedIds: { '0': ObjectId('663a5b3ebcf789cd2146b79a') }
+}
+prathamesh> db.student.insert({"rollno":2, "name":"Aniket", "class":"SYA"})
+{
+  acknowledged: true,
+  insertedIds: { '0': ObjectId('663a5b57bcf789cd2146b79b') }
+}
+prathamesh> db.student.find()                                                 //read
+[
+  {
+    _id: ObjectId('663a5b26bcf789cd2146b799'),
+    rollno: 1,
+    name: 'Prathamesh',
+    class: 'SYA'
+  },
+   {
+    _id: ObjectId('663a5b57bcf789cd2146b79b'),
+    rollno: 2,
+    name: 'Aniket',
+    class: 'SYA'
+  }
+]
+prathamesh> db.student.find().pretty()                                      //to read properly
+[
+  {
+    _id: ObjectId('663a5b26bcf789cd2146b799'),
+    rollno: 1,
+    name: 'Prathamesh',
+    class: 'SYA'
+  },
+  {
+    _id: ObjectId('663a5b57bcf789cd2146b79b'),
+    rollno: 2,
+    name: 'Aniket',
+    class: 'SYA'
+  }
+]
+prathamesh> db.student.update({"rollno":1},{$set :{"class":"BTECH"}})                                //update
+DeprecationWarning: Collection.update() is deprecated. Use updateOne, updateMany, or bulkWrite.
+{
+  acknowledged: true,
+  insertedId: null,
+  matchedCount: 1,
+  modifiedCount: 1,
+  upsertedCount: 0
+}
+prathamesh> db.student.find().pretty()
+[
+  {
+    _id: ObjectId('663a5b26bcf789cd2146b799'),
+    rollno: 1,
+    name: 'Prathamesh',
+    class: 'BTECH'
+  },
+  {
+    _id: ObjectId('663a5b57bcf789cd2146b79b'),
+    rollno: 2,
+    name: 'Aniket',
+    class: 'SYA'
+  }
+]
+
+
+prathamesh> db.student.remove({"rollno":2})                               //delete
+{ acknowledged: true, deletedCount: 1 }
+prathamesh> db.student.find().pretty()
+[
+  {
+    _id: ObjectId('663a5b26bcf789cd2146b799'),
+    rollno: 1,
+    name: 'Prathamesh',
+    class: 'BTECH'
+  }
+
+]
+prathamesh>
